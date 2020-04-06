@@ -1,28 +1,24 @@
 import React, { useEffect } from "react";
+import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import * as actions from "../actions/teamStatisticsActions";
 
 const HomePage = (props) => {
-  useEffect(() => {
-    console.log("Home page mounted ------------------>");
+  const { getLeagueLeaders } = props.actions;
+  const { isLoading, leagueLeadersOffense } = props.teamStatistics;
 
-    props.actions.getLeagueLeaders();
+  useEffect(() => {
+    getLeagueLeaders();
   }, []);
-
-  useEffect(() => {
-    console.log("Props-->", props.teamStatistics);
-  }, [props.teamStatistics]);
 
   return (
     <div>
       <h1>NFL Stats Scraper</h1>
-      {props.teamStatistics.isLoading ? (
+      {isLoading ? (
         <p>Loading data...</p>
       ) : (
-        props.teamStatistics.leagueLeadersOffense.map((x) => (
-          <p>{x.statisticTitle} loaded</p>
-        ))
+        Object.keys(leagueLeadersOffense).map((x) => <p>{x} loaded</p>)
       )}
     </div>
   );
@@ -39,5 +35,10 @@ function mapDispatchToProps(dispatch) {
     actions: bindActionCreators(actions, dispatch),
   };
 }
+
+HomePage.propTypes = {
+  actions: PropTypes.object,
+  teamStatistics: PropTypes.object,
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(HomePage);

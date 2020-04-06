@@ -6,7 +6,7 @@ import objectAssign from "object-assign";
 
 const initialState = {
   isLoading: true,
-  leagueLeadersOffense: "",
+  leagueLeadersOffense: {},
 };
 
 export default function teamStatisticsReducer(state = initialState, action) {

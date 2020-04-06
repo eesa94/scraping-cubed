@@ -23,7 +23,7 @@ export function getLeagueLeaders() {
         const $ = cheerio.load(html);
         const leagueLeadersOffense = $(".col:nth-child(1) > .data-table1");
 
-        const leagueLeadersOffenseArray = [];
+        const leagueLeadersOffenseObject = {};
 
         leagueLeadersOffense.each(function () {
           const statisticTitle = $(this).find("thead td:nth-child(1)").text();
@@ -37,14 +37,14 @@ export function getLeagueLeaders() {
             fiveTeamsArray.push({ teamName, teamStat });
           });
 
-          leagueLeadersOffenseArray.push({ statisticTitle, fiveTeamsArray });
+          leagueLeadersOffenseObject[statisticTitle] = fiveTeamsArray;
         });
-        return leagueLeadersOffenseArray;
+        return leagueLeadersOffenseObject;
       })
-      .then((x) =>
+      .then((leagueLeadersOffenseObject) =>
         dispatch({
           type: GET_LEAGUE_LEADERS,
-          payload: x,
+          payload: leagueLeadersOffenseObject,
         })
       )
       .then(() =>
