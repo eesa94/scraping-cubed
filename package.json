@@ -1,14 +1,13 @@
 {
-  "name": "react-slingshot",
-  "version": "7.0.1",
-  "description": "Starter kit for creating apps with React and Redux",
+  "name": "scraping-cubed",
+  "version": "0.1.0",
+  "description": "",
   "engines": {
     "node": ">=8",
     "npm": ">=3"
   },
   "scripts": {
     "preinstall": "node tools/nodeVersionCheck.js",
-    "setup": "node tools/setup/setupMessage.js && npm install && node tools/setup/setup.js",
     "remove-demo": "babel-node tools/removeDemo.js",
     "start-message": "babel-node tools/startMessage.js",
     "prestart": "npm run start-message",
@@ -29,12 +28,15 @@
     "open:cover": "npm run test:cover && open-cli ./coverage/lcov-report/index.html",
     "analyze-bundle": "babel-node ./tools/analyzeBundle.js"
   },
-  "author": "Cory House",
+  "author": "",
   "license": "MIT",
   "dependencies": {
     "@hot-loader/react-dom": "16.10.2",
+    "axios": "0.19.2",
+    "cheerio": "1.0.0-rc.3",
     "connected-react-router": "6.5.2",
     "object-assign": "4.1.1",
+    "puppeteer": "2.1.1",
     "react": "16.11.0",
     "react-dom": "16.11.0",
     "react-redux": "7.1.1",
@@ -103,24 +105,10 @@
     "webpack-dev-middleware": "3.7.2",
     "webpack-hot-middleware": "2.25.0"
   },
-  "keywords": [
-    "react",
-    "reactjs",
-    "react-router",
-    "hot",
-    "reload",
-    "hmr",
-    "live",
-    "edit",
-    "webpack",
-    "redux",
-    "flux",
-    "boilerplate",
-    "starter"
-  ],
+  "keywords": [],
   "repository": {
     "type": "git",
-    "url": "https://github.com/coryhouse/react-slingshot"
+    "url": ""
   },
   "jest": {
     "moduleNameMapper": {

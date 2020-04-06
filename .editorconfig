@@ -13,4 +13,4 @@ insert_final_newline = true
 trim_trailing_whitespace = false
 
 [*.js]
-quote_type = single
+quote_type = double
