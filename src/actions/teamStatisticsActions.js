@@ -1,3 +1,4 @@
+export const IS_LOADING = "IS_LOADING";
 export const GET_LEAGUE_LEADERS = "GET_LEAGUE_LEADERS";
 
 const axios = require("axios");
@@ -8,6 +9,13 @@ const url =
 
 export function getLeagueLeaders() {
   return function (dispatch) {
+    dispatch({
+      type: IS_LOADING,
+      payload: {
+        isLoading: true,
+      },
+    });
+
     return axios
       .get(proxyurl + url)
       .then((res) => {
@@ -37,6 +45,14 @@ export function getLeagueLeaders() {
         dispatch({
           type: GET_LEAGUE_LEADERS,
           payload: x,
+        })
+      )
+      .then(() =>
+        dispatch({
+          type: IS_LOADING,
+          payload: {
+            isLoading: false,
+          },
         })
       )
       .catch((err) => console.error(err));

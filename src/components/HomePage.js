@@ -17,6 +17,13 @@ const HomePage = (props) => {
   return (
     <div>
       <h1>NFL Stats Scraper</h1>
+      {props.teamStatistics.isLoading ? (
+        <p>Loading data...</p>
+      ) : (
+        props.teamStatistics.leagueLeadersOffense.map((x) => (
+          <p>{x.statisticTitle} loaded</p>
+        ))
+      )}
     </div>
   );
 };
