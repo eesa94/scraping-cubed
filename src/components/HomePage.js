@@ -1,44 +1,18 @@
 import React, { useEffect } from "react";
-import { Link } from "react-router-dom";
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+import * as actions from "../actions/teamStatisticsActions";
 
-const axios = require("axios");
-const cheerio = require("cheerio");
-const proxyurl = "https://cors-anywhere.herokuapp.com/";
-const url =
-  "http://www.nfl.com/stats/team?seasonId=2019&seasonType=REG&Submit=Go";
-
-const HomePage = () => {
+const HomePage = (props) => {
   useEffect(() => {
     console.log("Home page mounted ------------------>");
 
-    axios
-      .get(proxyurl + url)
-      .then((res) => {
-        const html = res.data;
-        const $ = cheerio.load(html);
-        const leagueLeadersOffense = $(".col:nth-child(1) > .data-table1");
-
-        const leagueLeadersOffenseArray = [];
-
-        leagueLeadersOffense.each(function () {
-          const statisticTitle = $(this).find("thead td:nth-child(1)").text();
-          const fiveTeamsRows = $(this).find("tbody tr");
-
-          const fiveTeamsArray = [];
-          fiveTeamsRows.each(function () {
-            const teamName = $(this).find("td[scope='row'] a").text();
-            const teamStat = $(this).find("td[align='right']").text();
-
-            fiveTeamsArray.push({ teamName, teamStat });
-          });
-
-          leagueLeadersOffenseArray.push({ statisticTitle, fiveTeamsArray });
-        });
-
-        console.log(leagueLeadersOffenseArray);
-      })
-      .catch((err) => console.error(err));
+    props.actions.getLeagueLeaders();
   }, []);
+
+  useEffect(() => {
+    console.log("Props-->", props.teamStatistics);
+  }, [props.teamStatistics]);
 
   return (
     <div>
@@ -47,4 +21,16 @@ const HomePage = () => {
   );
 };
 
-export default HomePage;
+function mapStateToProps(state) {
+  return {
+    teamStatistics: state.teamStatistics,
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    actions: bindActionCreators(actions, dispatch),
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(HomePage);
