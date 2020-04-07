@@ -1,20 +1,83 @@
 export const IS_LOADING = "IS_LOADING";
+export const GET_PASSING_RANKINGS_BY_TEAM = "GET_PASSING_RANKINGS_BY_TEAM";
 export const GET_LEAGUE_LEADERS = "GET_LEAGUE_LEADERS";
 
 const axios = require("axios");
 const cheerio = require("cheerio");
 const proxyurl = "https://cors-anywhere.herokuapp.com/";
-const url =
-  "http://www.nfl.com/stats/team?seasonId=2019&seasonType=REG&Submit=Go";
+
+export function getTeamPassingStatistics() {
+  const url =
+    "http://www.nfl.com/stats/categorystats?archive=false&conference=null&role=TM&offensiveStatisticCategory=TEAM_PASSING&defensiveStatisticCategory=null&season=2019&seasonType=REG&tabSeq=2&qualified=false&Submit=Go";
+
+  return function (dispatch) {
+    dispatch(isLoading(true));
+
+    return axios
+      .get(proxyurl + url)
+      .then((res) => {
+        const html = res.data;
+        const $ = cheerio.load(html);
+        const table = $("#result");
+
+        // Get a list of all the metrics at the top of the table
+        const metricTitlesRow = $(table).find("tbody:nth-child(2) tr");
+        const individualMetricsNames = $(metricTitlesRow).find("th");
+        const metricTitlesArr = [];
+
+        individualMetricsNames.each(function () {
+          let th;
+          if ($(this).children().length === 0) {
+            th = $(this).text().toLowerCase();
+          } else {
+            th = $(this).find("a").text().toLowerCase();
+          }
+          metricTitlesArr.push(th);
+        });
+
+        // Traverse the rows for each team and grab the statistics
+        const allTeamRows = $(table).find("tbody:nth-child(3) tr");
+        let allTeamsArray = [];
+
+        allTeamRows.each(function () {
+          const td = $(this).find("td");
+          let tdArray = [];
+
+          td.each(function () {
+            const text = $(this).text().trim();
+            tdArray.push(text);
+          });
+
+          // Now have two arrays - one contains the names of the metrics, and one contains the data for each row
+          // Code below uses reduce to combine two arrays into a single object where the key is the value from the first array and the value is value from the second array
+          // https://riptutorial.com/javascript/example/8628/merge-two-array-as-key-value-pair
+          const result = tdArray.reduce(function (result, field, index) {
+            result[metricTitlesArr[index]] = field;
+            return result;
+          }, {});
+
+          allTeamsArray.push(result);
+        });
+
+        return allTeamsArray;
+      })
+      .then((arr) =>
+        dispatch({
+          type: GET_PASSING_RANKINGS_BY_TEAM,
+          payload: arr,
+        })
+      )
+      .then(() => dispatch(isLoading(false)))
+      .catch((err) => console.error(err));
+  };
+}
 
 export function getLeagueLeaders() {
+  const url =
+    "http://www.nfl.com/stats/team?seasonId=2019&seasonType=REG&Submit=Go";
+
   return function (dispatch) {
-    dispatch({
-      type: IS_LOADING,
-      payload: {
-        isLoading: true,
-      },
-    });
+    dispatch(isLoading(true));
 
     return axios
       .get(proxyurl + url)
@@ -26,7 +89,12 @@ export function getLeagueLeaders() {
         const leagueLeadersOffenseObject = {};
 
         leagueLeadersOffense.each(function () {
-          const statisticTitle = $(this).find("thead td:nth-child(1)").text();
+          const statisticTitle = $(this)
+            .find("thead td:nth-child(1)")
+            .text()
+            .split("(YPG)")[0]
+            .replace(/\s/g, "")
+            .toLowerCase();
           const fiveTeamsRows = $(this).find("tbody tr");
 
           const fiveTeamsArray = [];
@@ -41,20 +109,22 @@ export function getLeagueLeaders() {
         });
         return leagueLeadersOffenseObject;
       })
-      .then((leagueLeadersOffenseObject) =>
+      .then((obj) =>
         dispatch({
           type: GET_LEAGUE_LEADERS,
-          payload: leagueLeadersOffenseObject,
+          payload: obj,
         })
       )
-      .then(() =>
-        dispatch({
-          type: IS_LOADING,
-          payload: {
-            isLoading: false,
-          },
-        })
-      )
+      .then(() => dispatch(isLoading(false)))
       .catch((err) => console.error(err));
   };
 }
+
+const isLoading = (bool) => {
+  return {
+    type: IS_LOADING,
+    payload: {
+      isLoading: bool,
+    },
+  };
+};

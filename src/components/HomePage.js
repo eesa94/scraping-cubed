@@ -5,11 +5,12 @@ import { bindActionCreators } from "redux";
 import * as actions from "../actions/teamStatisticsActions";
 
 const HomePage = (props) => {
-  const { getLeagueLeaders } = props.actions;
-  const { isLoading, leagueLeadersOffense } = props.teamStatistics;
+  const { getTeamPassingStatistics, getLeagueLeaders } = props.actions;
+  const { isLoading, passing, leagueLeadersOffense } = props.teamStatistics;
 
   useEffect(() => {
-    getLeagueLeaders();
+    getTeamPassingStatistics();
+    // getLeagueLeaders();
   }, []);
 
   return (
@@ -18,7 +19,14 @@ const HomePage = (props) => {
       {isLoading ? (
         <p>Loading data...</p>
       ) : (
-        Object.keys(leagueLeadersOffense).map((x) => <p>{x} loaded</p>)
+        passing &&
+        passing.map((item) => (
+          <div key={item.rk}>
+            <p>
+              {item.rk}: {item.team}
+            </p>
+          </div>
+        ))
       )}
     </div>
   );
