@@ -3,30 +3,26 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import * as actions from "../actions/teamStatisticsActions";
+import BarChart from "./BarChart";
 
 const HomePage = (props) => {
   const { getTeamPassingStatistics, getLeagueLeaders } = props.actions;
   const { isLoading, passing, leagueLeadersOffense } = props.teamStatistics;
 
   useEffect(() => {
-    getTeamPassingStatistics();
-    // getLeagueLeaders();
+    // if fetching multiple data sets, you need to use separate isLoading booleans for each, otherwise, only load one while in development
+    // getTeamPassingStatistics();
+    getLeagueLeaders();
   }, []);
 
   return (
     <div>
       <h1>NFL Stats Scraper</h1>
+
       {isLoading ? (
         <p>Loading data...</p>
       ) : (
-        passing &&
-        passing.map((item) => (
-          <div key={item.rk}>
-            <p>
-              {item.rk}: {item.team}
-            </p>
-          </div>
-        ))
+        <BarChart leagueLeadersOffense={leagueLeadersOffense} />
       )}
     </div>
   );
