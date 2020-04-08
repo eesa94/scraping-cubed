@@ -1,5 +1,6 @@
-export const IS_LOADING = "IS_LOADING";
-export const GET_PASSING_RANKINGS_BY_TEAM = "GET_PASSING_RANKINGS_BY_TEAM";
+export const IS_LOADING_LEAGUE_LEADERS = "IS_LOADING_LEAGUE_LEADERS";
+export const IS_LOADING_TEAM_PASSING = "IS_LOADING_TEAM_PASSING";
+export const GET_TEAM_PASSING = "GET_TEAM_PASSING";
 export const GET_LEAGUE_LEADERS = "GET_LEAGUE_LEADERS";
 
 const axios = require("axios");
@@ -11,7 +12,7 @@ export function getTeamPassingStatistics() {
     "http://www.nfl.com/stats/categorystats?archive=false&conference=null&role=TM&offensiveStatisticCategory=TEAM_PASSING&defensiveStatisticCategory=null&season=2019&seasonType=REG&tabSeq=2&qualified=false&Submit=Go";
 
   return function (dispatch) {
-    dispatch(isLoading(true));
+    dispatch(isLoadingTeamPassing(true));
 
     return axios
       .get(proxyurl + url)
@@ -63,11 +64,11 @@ export function getTeamPassingStatistics() {
       })
       .then((arr) =>
         dispatch({
-          type: GET_PASSING_RANKINGS_BY_TEAM,
+          type: GET_TEAM_PASSING,
           payload: arr,
         })
       )
-      .then(() => dispatch(isLoading(false)))
+      .then(() => dispatch(isLoadingTeamPassing(false)))
       .catch((err) => console.error(err));
   };
 }
@@ -77,7 +78,7 @@ export function getLeagueLeaders() {
     "http://www.nfl.com/stats/team?seasonId=2019&seasonType=REG&Submit=Go";
 
   return function (dispatch) {
-    dispatch(isLoading(true));
+    dispatch(isLoadingLeagueLeaders(true));
 
     return axios
       .get(proxyurl + url)
@@ -115,16 +116,25 @@ export function getLeagueLeaders() {
           payload: obj,
         })
       )
-      .then(() => dispatch(isLoading(false)))
+      .then(() => dispatch(isLoadingLeagueLeaders(false)))
       .catch((err) => console.error(err));
   };
 }
 
-const isLoading = (bool) => {
+const isLoadingLeagueLeaders = (bool) => {
   return {
-    type: IS_LOADING,
+    type: IS_LOADING_LEAGUE_LEADERS,
     payload: {
-      isLoading: bool,
+      isLoadingLeagueLeaders: bool,
+    },
+  };
+};
+
+const isLoadingTeamPassing = (bool) => {
+  return {
+    type: IS_LOADING_TEAM_PASSING,
+    payload: {
+      isLoadingTeamPassing: bool,
     },
   };
 };

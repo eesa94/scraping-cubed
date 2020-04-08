@@ -1,13 +1,15 @@
 import {
-  IS_LOADING,
-  GET_PASSING_RANKINGS_BY_TEAM,
+  IS_LOADING_LEAGUE_LEADERS,
+  IS_LOADING_TEAM_PASSING,
+  GET_TEAM_PASSING,
   GET_LEAGUE_LEADERS,
 } from "../actions/teamStatisticsActions";
 import objectAssign from "object-assign";
 
 const initialState = {
-  isLoading: true,
-  passing: [],
+  isLoadingLeagueLeaders: true,
+  isLoadingTeamPassing: true,
+  teamPassing: [],
   leagueLeadersOffense: {},
 };
 
@@ -15,14 +17,19 @@ export default function teamStatisticsReducer(state = initialState, action) {
   let newState;
 
   switch (action.type) {
-    case IS_LOADING:
+    case IS_LOADING_LEAGUE_LEADERS:
       newState = objectAssign({}, state);
-      newState.isLoading = action.payload.isLoading;
+      newState.isLoadingLeagueLeaders = action.payload.isLoadingLeagueLeaders;
       return newState;
 
-    case GET_PASSING_RANKINGS_BY_TEAM:
+    case IS_LOADING_TEAM_PASSING:
       newState = objectAssign({}, state);
-      newState.passing = action.payload;
+      newState.isLoadingTeamPassing = action.payload.isLoadingTeamPassing;
+      return newState;
+
+    case GET_TEAM_PASSING:
+      newState = objectAssign({}, state);
+      newState.teamPassing = action.payload;
       return newState;
 
     case GET_LEAGUE_LEADERS:

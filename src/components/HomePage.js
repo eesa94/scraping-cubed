@@ -7,11 +7,15 @@ import BarChart from "./BarChart";
 
 const HomePage = (props) => {
   const { getTeamPassingStatistics, getLeagueLeaders } = props.actions;
-  const { isLoading, passing, leagueLeadersOffense } = props.teamStatistics;
+  const {
+    isLoadingTeamPassing,
+    isLoadingLeagueLeaders,
+    teamPassing,
+    leagueLeadersOffense,
+  } = props.teamStatistics;
 
   useEffect(() => {
-    // if fetching multiple data sets, you need to use separate isLoading booleans for each, otherwise, only load one while in development
-    // getTeamPassingStatistics();
+    getTeamPassingStatistics();
     getLeagueLeaders();
   }, []);
 
@@ -19,10 +23,16 @@ const HomePage = (props) => {
     <div>
       <h1>NFL Stats Scraper</h1>
 
-      {isLoading ? (
+      {isLoadingLeagueLeaders ? (
         <p>Loading data...</p>
       ) : (
         <BarChart leagueLeadersOffense={leagueLeadersOffense} />
+      )}
+
+      {isLoadingTeamPassing ? (
+        <p>Loading data...</p>
+      ) : (
+        <p>Loaded team passing</p>
       )}
     </div>
   );
